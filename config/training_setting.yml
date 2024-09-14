@@ -4,12 +4,10 @@ augmentation:
 
 
   # 들어간 것만 들어간 순서대로 적용. 세부 설정 원할경우 setting에 직접 적기
-  # 안넣으면 적용 안됨
-  # 이름은 꼭 augmentation_list.txt를 참고해서 넣어주세요
-  # 세부 설정 시에는 꼭 name 맞춰서 넣어주셔야 합니다.
+  # setting이나 list의 값은 꼭 augmentation_list.txt를 참고해서 넣어주세요
   # Resize, ToTensor, Normalize는 is_train과 관계 없이 default로 적용됩니다.
   # 적용 순서 : [Resize -> select -> Normalize -> ToTensor]
-  select: [RandomBrightnessContrast, CoarseDropout, HorizontalFlip, ShiftScaleRotate] 
+  select: [RandomBrightnessContrast, CoarseDropout, HorizontalFlip, ShiftScaleRotate, RandomSunFlare] 
   setting:
     Resize:
       height: 224
@@ -47,7 +45,7 @@ augmentation:
 # training setting
 test_size: 0.2 # validation split rate
 batch_size: 64
-epochs: 1
+epochs: 5
 
 
 
@@ -55,20 +53,35 @@ epochs: 1
 model_name: resnet18 # timm 모델명. timm_list.txt에 위치
 model_type: timm # torchvision or timm
 save_result_path: ./resnet18_test # 훈련 모델을 저장할 위치
-is_pretrained: True
+is_pretrained: True # 사전 훈련 모델 여부
 
 
 # optimizer
 optimizer: 
-  name: adamW  # ['adamW', 'adam', 'SGD']. 해당 위치만 바꾸면 optimizer 선택 가능합니다.
-  setting:
-    lr: 0.001
-    weight_decay: 0.01
+  select: adamW
+  adamW:
+    name: adamW
+    setting:
+      lr: 0.001
+      weight_decay: 0.01
+
+  adam:
+    name: adamW
+    setting:
+      lr: 0.001
+      weight_decay: 0.01
+  
+  SGD:
+    name: adamW
+    setting:
+      lr: 0.001
+      weight_decay: 0.01
 
 
 # schedular
 schedular:
   select: cosine # 해당 위치만 바꾸면 schedular 선택 가능합니다.
+
   cosine:
     name: cosine
     setting:
@@ -83,8 +96,8 @@ schedular:
 
 
 # wandb 설정
-project_name: 'local_test'
-test_name: "resnet_test"
+project_name: 'local_test' # 프로젝트 이름
+test_name: "resnet_test" # 해당 프로젝트 내 실험 이름
 
 
 

@@ -201,7 +201,7 @@ def main():
     save_result_path = config["save_result_path"]
     
     SCHEDULAR = config["schedular"][config["schedular"]["select"]]
-    OPTIMIZER = config["optimizer"]
+    OPTIMIZER = config["optimizer"][config["optimizer"]["select"]]
     
     
     # parse model info
