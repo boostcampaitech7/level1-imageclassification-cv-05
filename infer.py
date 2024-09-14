@@ -52,13 +52,14 @@ def inference(
 
 def main():
     ##############################################################
-    with open("./config/test_setting.yml", "r") as file:
+    with open("./config/test_setting.yml", "r", encoding='utf-8') as file:
         config = yaml.full_load(file)
 
-    with open("./config/training_setting.yml", "r") as file:
+    with open("./config/training_setting.yml", "r", encoding='utf-8') as file:
         train_config = yaml.full_load(file)
     
     ############# test setting 이것도 나중에 파일이나 argparser로 가져오면 좋을듯
+    os.chdir(config["project_dir"])
     testdata_dir = config["testdata_dir"]
     testdata_info_file = config["testdata_info_file"]
     num_classes = config["num_classes"]

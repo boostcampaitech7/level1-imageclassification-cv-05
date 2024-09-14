@@ -151,6 +151,7 @@ class Trainer:
                 total_loss += loss.item()
                 progress_bar.set_postfix(loss=loss.item(), acc=total_correct / total_num)
         
+        
         final_loss = total_loss / len(self.val_loader)
         final_acc = total_correct / total_num
         wandb.log({'validation_loss' : final_loss,
@@ -183,7 +184,7 @@ def main():
     ##########################################################################################################
     ########## setting. 나중에 argparser로 대체할 예정. infer.py도 마찬가지
     # 만약 argparser로 할거면 augmentation setting은 고정해두고 해야할듯
-    with open('./config/training_setting.yml', 'r') as f:
+    with open('./config/training_setting.yml', 'r', encoding='utf-8') as f:
         config = yaml.full_load(f)
     
     
@@ -220,16 +221,14 @@ def main():
     horizontal_flip_setting = config["augmentation"]["horizontal_flip"]
     augmentation_table = config["augmentation"]["augmentation_table"]
     ##########################################################################################################
-    
-    ##########################################################################################################
     ##### wandb setting
-    
     wandb.init(project=config["project_name"])
     wandb.run.name = config["test_name"]
     wandb.run.save()
     
     wandb.config.update(config)
     ##########################################################################################################
+    
     
     # device check
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
