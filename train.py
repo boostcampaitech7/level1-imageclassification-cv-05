@@ -200,7 +200,7 @@ def main():
     EPOCHS = config["epochs"]
     save_result_path = config["save_result_path"]
     
-    SCHEDULAR_TYPE = config["schedular_type"]
+    SCHEDULAR = config["schedular"][config["schedular"]["select"]]
     OPTIMIZER = config["optimizer"]
     
     
@@ -278,7 +278,8 @@ def main():
                                                  is_inference = False, 
                                                  seedworker = seed.seed_worker)
     
-    
+    print(len(train_dataloader))
+    print(len(test_dataloader))
     # # model 정의하기
     model = _model.ModelSelector(
         model_type = MODEL_TYPE,
@@ -290,23 +291,23 @@ def main():
     
     # optimizer, loss, schedular
     optimizer = _optimizer.get_optimizer(model.parameters(), **OPTIMIZER)
-    # criterion = _loss.get_loss()
-    # schedular = _schedular.get_schedular(SCHEDULAR_TYPE, optimizer, len(train_dataloader) // 64 + 1)
+    criterion = _loss.get_loss()
+    schedular = _schedular.get_schedular(optimizer, **SCHEDULAR)
     
     
-    # # Trainer class
-    # trainer = Trainer(
-    #     model = model,
-    #     device = device,
-    #     train_loader = train_dataloader,
-    #     val_loader = test_dataloader,
-    #     optimizer = optimizer,
-    #     scheduler = schedular,
-    #     loss_fn = criterion,
-    #     epochs = EPOCHS,
-    #     result_path = save_result_path
-    # )
-    # trainer.train()
+    # Trainer class
+    trainer = Trainer(
+        model = model,
+        device = device,
+        train_loader = train_dataloader,
+        val_loader = test_dataloader,
+        optimizer = optimizer,
+        scheduler = schedular,
+        loss_fn = criterion,
+        epochs = EPOCHS,
+        result_path = save_result_path
+    )
+    trainer.train()
 
 
 if __name__ == "__main__":

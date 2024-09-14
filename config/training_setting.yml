@@ -40,7 +40,7 @@ image_size: !!python/tuple # size for resize
 # training setting
 test_size: 0.2 # validation split rate
 batch_size: 64
-epochs: 3
+epochs: 1
 
 
 
@@ -52,24 +52,39 @@ is_pretrained: True
 
 
 # optimizer
-optimizer: adamW  # ['adamW', 'adam', 'SGD']
-learning_rate: 0.001
-weight_decay: 0.01
+optimizer: 
+  name: adamW  # ['adamW', 'adam', 'SGD']. 해당 위치만 바꾸면 optimizer 선택 가능합니다.
+  setting:
+    lr: 0.001
+    weight_decay: 0.01
+
 
 # schedular
-schedular_type: cosine # ['steplr'. 'cosine']
+schedular:
+  select: cosine # 해당 위치만 바꾸면 schedular 선택 가능합니다.
+  cosine:
+    name: cosine
+    setting:
+      T_max: 10 # 반주기가 10에폭
+      eta_min: 0.00001 # min lr
+
+  steplr:
+    name: steplr
+    setting:
+      step_size: 30 # n step마다 lr 감소
+      scheduler_gamma: 0.1 # lr감소 비율
+
+
+# wandb 설정
+project_name: 'local_test'
+test_name: "resnet_test"
 
 
 
 # 기본 경로 설정(한번 설정 후 바꿀 필요 없음)
 traindata_dir: ../data/train # 훈련데이터가 위치한 폴더
 traindata_info_file: ../data/train.csv # train image meta data가 들어있는 csv파일 위치
-project_dir: "C:\Users\User\Desktop\네이버 부스트캠프\project\level1-imageclassification-cv-05" #프로젝트 폴더
-
-
-# wandb 설정
-project_name: 'sketch_classification example'
-test_name: "resnet_test"
+project_dir: "C:/Users/User/Desktop/naver_boostcamp/project/cv_05" #프로젝트 폴더
 
 
 ################################
