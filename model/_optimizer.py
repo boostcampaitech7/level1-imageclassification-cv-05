@@ -14,8 +14,8 @@ def get_optimizer(params, **kwargs):
     Returns:
         _type_: _description_
     """
-    name = kwargs["name"]
-    setting = kwargs["setting"]
+    name = kwargs["name"] if "setting" in kwargs else "adam"
+    setting = kwargs["setting"] if "setting" in kwargs else {}
     
     
     if name == "adam":

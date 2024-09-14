@@ -12,12 +12,14 @@ from albumentations.pytorch import ToTensorV2
 from inspect import getmembers, isclass
 
 
+# tuple list를 dictionary로 바꿔줍니다. 
 def Convert(tup):
     di = {}
     for a, b in tup:
         di[a] = b
     return di
 
+# Albumentation의 모든 class를 가져오는 함수입니다.
 def get_augment_dict():
     return Convert(getmembers(A, isclass))
 
