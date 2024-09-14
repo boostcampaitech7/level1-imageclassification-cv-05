@@ -2,12 +2,22 @@ batch_size: 64
 image_size: !!python/tuple
 - 224
 - 224
+
+# model
 model_name: resnet101
 model_type: timm
+save_result_path: ./resnet101_result
+
+
+# 앙상블시 모델들, 아직 미구현
 model_types: timm
 models: []
-num_classes: 500
-save_result_path: ./resnet101_result
 save_result_paths: []
+
+
+
+# 한번 설정 후 바꿀 필요 없음
 testdata_dir: ../data/test
 testdata_info_file: ../data/test.csv
+project_dir: "C:\Users\User\Desktop\네이버 부스트캠프\project\level1-imageclassification-cv-05" #프로젝트 폴더
+num_classes: 500
