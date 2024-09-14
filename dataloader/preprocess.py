@@ -16,7 +16,7 @@ class AlbumentationsTransform:
     def __init__(self,
                  image_size,
                  is_train: bool = True,
-                 save_name = "transform.json",
+                 save_name = "transform.yml",
                  shift_scale_rotate_setting = {
                     "shift_limit": 0.05, 
                     "scale_limit": 0.1, 

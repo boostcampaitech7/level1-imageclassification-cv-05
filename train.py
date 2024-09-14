@@ -202,8 +202,6 @@ def main():
     
     SCHEDULAR_TYPE = config["schedular_type"]
     OPTIMIZER = config["optimizer"]
-    LEARNING_RATE = config["learning_rate"]
-    WEIGHT_DECAY = config["weight_decay"]
     
     
     # parse model info
@@ -281,7 +279,7 @@ def main():
                                                  seedworker = seed.seed_worker)
     
     
-    # model 정의하기
+    # # model 정의하기
     model = _model.ModelSelector(
         model_type = MODEL_TYPE,
         num_classes = num_classes,
@@ -291,24 +289,24 @@ def main():
     
     
     # optimizer, loss, schedular
-    optimizer = _optimizer.get_optimizer(OPTIMIZER, model.parameters(), lr=LEARNING_RATE, weight_decay = WEIGHT_DECAY)
-    criterion = _loss.get_loss()
-    schedular = _schedular.get_schedular(SCHEDULAR_TYPE, optimizer, len(train_dataloader) // 64 + 1)
+    optimizer = _optimizer.get_optimizer(model.parameters(), **OPTIMIZER)
+    # criterion = _loss.get_loss()
+    # schedular = _schedular.get_schedular(SCHEDULAR_TYPE, optimizer, len(train_dataloader) // 64 + 1)
     
     
-    # Trainer class
-    trainer = Trainer(
-        model = model,
-        device = device,
-        train_loader = train_dataloader,
-        val_loader = test_dataloader,
-        optimizer = optimizer,
-        scheduler = schedular,
-        loss_fn = criterion,
-        epochs = EPOCHS,
-        result_path = save_result_path
-    )
-    trainer.train()
+    # # Trainer class
+    # trainer = Trainer(
+    #     model = model,
+    #     device = device,
+    #     train_loader = train_dataloader,
+    #     val_loader = test_dataloader,
+    #     optimizer = optimizer,
+    #     scheduler = schedular,
+    #     loss_fn = criterion,
+    #     epochs = EPOCHS,
+    #     result_path = save_result_path
+    # )
+    # trainer.train()
 
 
 if __name__ == "__main__":
