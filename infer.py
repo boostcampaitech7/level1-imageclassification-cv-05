@@ -65,7 +65,6 @@ def main():
     num_classes = config["num_classes"]
     
     # inference setting
-    IMAGE_SIZE = train_config["image_size"]
     BATCH_SIZE = config["batch_size"]
     
     
@@ -74,6 +73,11 @@ def main():
     MODEL_NAME = config["model_name"]
     save_result_path = config["save_result_path"]
         
+        
+    # augmentation은 training_setting으로부터 가져옵니다
+    AUGMENTATION = train_config["augmentation"]
+    AUGMENTATION["save_name"] = "test_transform"
+    
     
     # Ensemble 할 시 여러 best model 불러오기
     MODEL_TYPES = config["model_types"]
@@ -90,11 +94,7 @@ def main():
     test_info = pd.read_csv(testdata_info_file)
     
     # test image preprocessing
-    test_transform = preprocess.AlbumentationsTransform(image_size = IMAGE_SIZE, 
-                                                         is_train=False,
-                                                         save_name = "test_transform",
-                                                         augmentation_table=train_config["augmentation"]["augmentation_table"]
-                                                        )
+    test_transform = preprocess.AlbumentationsTransform(is_train=False, **AUGMENTATION)
     
     
     # test dataloader

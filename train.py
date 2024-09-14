@@ -211,13 +211,7 @@ def main():
     
 
     # parse augmentation and preprocessing setting
-    IMAGE_SIZE = config["image_size"]
-    shift_scale_rotate_setting = config["augmentation"]["shift_scale_rotate"]
-    bright_contrast_setting = config["augmentation"]["bright_contrast"]
-    coarse_dropout_setting = config["augmentation"]["coarse_dropout"]
-    random_crop_setting = config["augmentation"]["random_crop"]
-    horizontal_flip_setting = config["augmentation"]["horizontal_flip"]
-    augmentation_table = config["augmentation"]["augmentation_table"]
+    AUGMENTATION = config["augmentation"]
     ##########################################################################################################
     ##### wandb setting
     wandb.init(project=config["project_name"])
@@ -244,23 +238,9 @@ def main():
     
     
     # train, test image에 대한 전처리 정의
-    train_transform = preprocess.AlbumentationsTransform(image_size = IMAGE_SIZE, 
-                                                         is_train=True,
-                                                         save_name="train_transform.yml",
-                                                         shift_scale_rotate_setting = shift_scale_rotate_setting,
-                                                         bright_contrast_setting = bright_contrast_setting,
-                                                         coarse_dropout_setting = coarse_dropout_setting,
-                                                         random_crop_setting = random_crop_setting,
-                                                         horizontal_flip_setting = horizontal_flip_setting,
-                                                         augmentation_table = augmentation_table
-                                                         )
-    
-    test_transform = preprocess.AlbumentationsTransform(image_size = IMAGE_SIZE, 
-                                                         is_train=False,
-                                                         save_name="test_transform.yml",
-                                                         random_crop_setting = random_crop_setting,
-                                                         augmentation_table = augmentation_table
-                                                        )
+    train_transform = preprocess.AlbumentationsTransform(is_train=True, **AUGMENTATION)
+    AUGMENTATION["save_name"] = "test_transform.yml"
+    test_transform = preprocess.AlbumentationsTransform(is_train=False, **AUGMENTATION)
     
     
     # train, test dataloader
@@ -278,8 +258,6 @@ def main():
                                                  is_inference = False, 
                                                  seedworker = seed.seed_worker)
     
-    print(len(train_dataloader))
-    print(len(test_dataloader))
     # # model 정의하기
     model = _model.ModelSelector(
         model_type = MODEL_TYPE,
