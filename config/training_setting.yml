@@ -10,8 +10,8 @@ augmentation:
   select: [RandomBrightnessContrast, CoarseDropout, HorizontalFlip, ShiftScaleRotate, RandomSunFlare] 
   setting:
     Resize:
-      height: 224
-      width: 224
+      height: 280
+      width: 280
 
     RandomBrightnessContrast: # random brightness and contrast
       brightness_limit: 0.2
@@ -26,10 +26,13 @@ augmentation:
 
     HorizontalFlip: #horizonttal flip
       p: 0.5
+    
+    Flip:
+      p: 0.5
 
     RandomCrop: #random crop
-      height: 200
-      width: 200
+      height: 224
+      width: 224
 
     ShiftScaleRotate: #shift, scale, rotate
       p: 0.5
@@ -91,7 +94,7 @@ schedular:
   steplr:
     name: steplr
     setting:
-      step_size: 30 # n step마다 lr 감소
+      step_size: 3 # n epoch마다 lr 감소
       scheduler_gamma: 0.1 # lr감소 비율
 
 
