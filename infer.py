@@ -54,9 +54,6 @@ def main():
     ##############################################################
     with open("./config/test_setting.yml", "r", encoding='utf-8') as file:
         config = yaml.full_load(file)
-
-    with open("./config/training_setting.yml", "r", encoding='utf-8') as file:
-        train_config = yaml.full_load(file)
     
     ############# test setting 이것도 나중에 파일이나 argparser로 가져오면 좋을듯
     os.chdir(config["project_dir"])
@@ -75,14 +72,7 @@ def main():
         
         
     # augmentation은 training_setting으로부터 가져옵니다
-    AUGMENTATION = train_config["augmentation"]
-    AUGMENTATION["save_name"] = "test_transform"
-    
-    
-    # Ensemble 할 시 여러 best model 불러오기
-    MODEL_TYPES = config["model_types"]
-    MODELS = config["models"]
-    save_result_paths = config["save_result_paths"]
+    AUGMENTATION = config["augmentation"]
     ##############################################################
     
     # device check
