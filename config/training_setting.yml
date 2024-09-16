@@ -45,7 +45,7 @@ augmentation:
 # training setting
 test_size: 0.2 # validation split rate
 batch_size: 64
-epochs: 5
+epochs: 1
 
 
 
@@ -66,13 +66,13 @@ optimizer:
       weight_decay: 0.01
 
   adam:
-    name: adamW
+    name: adam
     setting:
       lr: 0.001
       weight_decay: 0.01
   
   SGD:
-    name: adamW
+    name: SGD
     setting:
       lr: 0.001
       weight_decay: 0.01
