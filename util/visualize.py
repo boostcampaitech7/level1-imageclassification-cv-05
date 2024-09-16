@@ -71,11 +71,31 @@ class ImageVisualization():
         for i, path in enumerate(images):
             image = cv2.imread(path, cv2.IMREAD_COLOR)  # 이미지를 BGR 컬러 포맷의 numpy array로 읽어옵니다.
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            image = transform(image).detach().permute(1, 2, 0).clip(0, 1)
+            image = transform(image).permute(1, 2, 0).cpu().detach().numpy()
             ax = axs[i // 5, i % 5]  # Use double indexing for 2D subplots
             ax.imshow(image)
             ax.axis('off')
         plt.show()
+    
+    def single_image_compare(self, target, transform):
+        fig, axs = plt.subplots(1, 2, figsize=(16, 10))
+        
+        len_data = len(self.image_data[self.image_data['target'] == target])
+        images = self.image_data[self.image_data['target'] == target]['path'].values
+        idx = np.random.randint(0, len_data)
+        path = images[idx]
+        
+        img = Image.open(path)
+        axs[0].imshow(img)
+        axs[0].axis('off')
+        
+        # show augmented image
+        image = cv2.imread(path, cv2.IMREAD_COLOR)  # 이미지를 BGR 컬러 포맷의 numpy array로 읽어옵니다.
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = transform(image).permute(1, 2, 0).cpu().detach().numpy()
+        axs[1].imshow(image)
+        axs[1].axis('off')
+        
 
 
 if __name__ == "__main__":
