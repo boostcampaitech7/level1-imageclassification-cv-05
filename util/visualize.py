@@ -8,8 +8,9 @@ from collections import defaultdict
 from PIL import Image
 import numpy as np
 import cv2
-import torch
 from tqdm.auto import tqdm
+import albumentations as A
+from albumentations.pytorch import ToTensorV2
 
 
 class ImageVisualization():
@@ -71,13 +72,17 @@ class ImageVisualization():
         for i, path in enumerate(images):
             image = cv2.imread(path, cv2.IMREAD_COLOR)  # 이미지를 BGR 컬러 포맷의 numpy array로 읽어옵니다.
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            image = transform(image).permute(1, 2, 0).cpu().detach().numpy()
+            
+            
+            transform = A.Compose([t for t in transform.transform if not isinstance(t, (A.Normalize, ToTensorV2))])
+            image = transform(image=image)['image']
             ax = axs[i // 5, i % 5]  # Use double indexing for 2D subplots
             ax.imshow(image)
             ax.axis('off')
         plt.show()
     
     def single_image_compare(self, target, transform):
+        transform = A.Compose([t for t in transform.transform if not isinstance(t, (A.Normalize, ToTensorV2))])
         fig, axs = plt.subplots(1, 2, figsize=(16, 10))
         
         len_data = len(self.image_data[self.image_data['target'] == target])
@@ -92,7 +97,7 @@ class ImageVisualization():
         # show augmented image
         image = cv2.imread(path, cv2.IMREAD_COLOR)  # 이미지를 BGR 컬러 포맷의 numpy array로 읽어옵니다.
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image = transform(image).permute(1, 2, 0).cpu().detach().numpy()
+        image = transform(image=image)['image']
         axs[1].imshow(image)
         axs[1].axis('off')
         
