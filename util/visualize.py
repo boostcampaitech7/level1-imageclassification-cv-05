@@ -65,6 +65,8 @@ class ImageVisualization():
             target (int): target class의 번호
             transform (A.Compose()): Albumentation Compose class
         """
+        
+        transform = A.Compose([t for t in transform.transform if not isinstance(t, (A.Normalize, ToTensorV2))])
         self.show_class_images(target)
         len_data = len(self.image_data[self.image_data['target'] == target])
         fig, axs = plt.subplots((len_data // 5)+1, 5, figsize=(16, 10))
@@ -74,7 +76,6 @@ class ImageVisualization():
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             
             
-            transform = A.Compose([t for t in transform.transform if not isinstance(t, (A.Normalize, ToTensorV2))])
             image = transform(image=image)['image']
             ax = axs[i // 5, i % 5]  # Use double indexing for 2D subplots
             ax.imshow(image)
