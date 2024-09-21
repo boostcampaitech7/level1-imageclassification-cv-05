@@ -4,15 +4,40 @@
 <div align="center">
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/kimsuckhyun"><img src="https://stages.ai/_next/image?url=https%3A%2F%2Faistages-api-public-prod.s3.amazonaws.com%2Fapp%2FUsers%2F00004010%2Fuser_image.png&w=1920&q=75" width="100px;" alt=""/><br /><sub><b>김석현</b></sub><br />
+    <td align="center">
+      <a href="https://github.com/kimsuckhyun">
+        <img src="https://stages.ai/_next/image?url=https%3A%2F%2Faistages-api-public-prod.s3.amazonaws.com%2Fapp%2FUsers%2F00004010%2Fuser_image.png&w=1920&q=75" width="120px" height="120px" alt=""/>
+        <hr />
+        <sub><b>김석현</b></sub><br />
+      </a>
     </td>
-        <td align="center"><a href="https://github.com/kupulau"><img src="https://stages.ai/_next/image?url=https%3A%2F%2Faistages-api-public-prod.s3.amazonaws.com%2Fapp%2FUsers%2F00003808%2Fuser_image.png&w=1920&q=75" width="100px;" alt=""/><br /><sub><b>황지은</b></sub><br />
+    <td align="center">
+      <a href="https://github.com/kupulau">
+        <img src="https://stages.ai/_next/image?url=https%3A%2F%2Faistages-api-public-prod.s3.amazonaws.com%2Fapp%2FUsers%2F00003808%2Fuser_image.png&w=1920&q=75" width="120px" height="120px" alt=""/>
+        <hr />
+        <sub><b>황지은</b></sub><br />
+      </a>
     </td>
-        <td align="center"><a href="https://github.com/lexxsh"><img src="https://stages.ai/_next/image?url=https%3A%2F%2Faistages-api-public-prod.s3.amazonaws.com%2Fapp%2FUsers%2F00003955%2Fuser_image.png&w=1920&q=75" width="100px;" alt=""/><br /><sub><b>이상혁</b></sub><br />
+    <td align="center">
+      <a href="https://github.com/lexxsh">
+        <img src="https://stages.ai/_next/image?url=https%3A%2F%2Faistages-api-public-prod.s3.amazonaws.com%2Fapp%2FUsers%2F00003955%2Fuser_image.png&w=1920&q=75" width="120px" height="120px" alt=""/>
+        <hr />
+        <sub><b>이상혁</b></sub><br />
+      </a>
     </td>
-        <td align="center"><a href="https://github.com/june21a"><img src="https://stages.ai/_next/image?url=https%3A%2F%2Faistages-api-public-prod.s3.amazonaws.com%2Fapp%2FUsers%2F00003793%2Fuser_image.png&w=1920&q=75" width="100px;" alt=""/><br /><sub><b>박준일</b></sub><br />
+    <td align="center">
+      <a href="https://github.com/june21a">
+        <img src="https://stages.ai/_next/image?url=https%3A%2F%2Faistages-api-public-prod.s3.amazonaws.com%2Fapp%2FUsers%2F00003793%2Fuser_image.png&w=1920&q=75" width="120px" height="120px" alt=""/>
+        <hr />
+        <sub><b>박준일</b></sub><br />
+      </a>
     </td>
-        <td align="center"><a href="https://github.com/glasshong"><img src="https://stages.ai/_next/image?url=https%3A%2F%2Faistages-api-public-prod.s3.amazonaws.com%2Fapp%2FUsers%2F00004034%2Fuser_image.png&w=1920&q=75" width="100px;" alt=""/><br /><sub><b>홍유리</b></sub><br />
+    <td align="center">
+      <a href="https://github.com/glasshong">
+        <img src="https://stages.ai/_next/image?url=https%3A%2F%2Faistages-api-public-prod.s3.amazonaws.com%2Fapp%2FUsers%2F00004034%2Fuser_image.png&w=1920&q=75" width="120px" height="120px" alt=""/>
+        <hr />
+        <sub><b>홍유리</b></sub><br />
+      </a>
     </td>
   </tr>
 </table>
@@ -42,50 +67,62 @@ Computer Vision에서는 다양한 형태의 이미지 데이터가 활용되고
 - Private 리더보드에서 최종적으로 아래와 같은 결과를 얻었습니다.  
 
 
-## 📁 데이터셋 구조 (수정)
+## 📁 데이터셋 구조 
 
 ```
-📦datasets
- ┣ 📂eval
- ┃ ┣ 📂images
- ┃ ┣ 📜info.csv
+📦data
+ ┣ 📜sample_submission.csv
+ ┣ 📜test.csv
+ ┣ 📜train.csv
+ ┣ 📂test
+ ┃ ┣ 📜0.JPEG
+ ┃ ┣ 📜1.JPEG
+ ┃ ┣ 📜2.JPEG
+ ┃ ┗ ...
  ┣ 📂train
- ┃ ┣ 📂images
- ┃ ┗ 📜train.csv
- ┗ 📂trainQA
-   ┣ 📂images
-   ┗ 📜train.csv
+ ┃ ┣ 📂n01443537
+ ┃ ┣ 📂n01484850
+ ┃ ┗ ...
 ```
-이 코드는 `부스트캠프 AI Tech`에서 제공하는 데이터셋으로 다음과 같은 구성을 따릅니다. 
-- train은 학습에 사용하는 데이터 셋
-- eval은 평가에 사용하는 데이터셋
-- trainQA는 train 데이터에서 miss labeling된 데이터를 수정한 폴더입니다.
+- 학습에 사용할 이미지 데이터는 15,021개로 data/train/ 아래에 각 객체별 폴더로 구분되어 있습니다. 
+- 제공되는 이미지는 주로 사람의 손으로 그려진 드로잉이나 스케치로 구성되어 있습니다. 
+- train.csv와 test.csv에는 각 이미지별 폴더명(class_name), 이미지 경로(image_path), 예측해야할 class(target)에 대한 정보가 포함되어 있습니다.
 
 <br />
 
-## 📁 프로젝트 구조 (수정)
+## 📁 프로젝트 구조 
 ```
-📦level1-imageclassification-cv-02
+📦level1-imageclassification-cv-05-main
  ┣ 📂.github
- ┃ ┣ 📂ISSUE_TEMPLATE
- ┃ ┃ ┣ 📜bug_report.md
- ┃ ┃ ┗ 📜feature_request.md
- ┃ ┣ 📜.keep
- ┃ ┗ 📜PULL_REQUEST_TEMPLATE.md
- ┣ 📂notebook
- ┃ ┗ 📜sample_submission.ipynb
- ┣ 📂redis_model_scheduler
- ┃ ┣ 📜redis_publisher.py
- ┃ ┗ 📜schedule_search.py
+ ┃ ┗ 📜.keep
+ ┣ 📂baseline_code
+ ┃ ┣ 📜baseline_code.ipynb
+ ┃ ┗ 📜eda.ipynb
+ ┣ 📂config
+ ┃ ┣ 📜test_setting.yml
+ ┃ ┣ 📜test_transform
+ ┃ ┣ 📜test_transform.yml
+ ┃ ┣ 📜training_setting.yml
+ ┃ ┣ 📜train_transform.yml
+ ┃ ┗ 📜transform.json
+ ┣ 📂dataloader
+ ┃ ┣ 📜dataloader.py
+ ┃ ┗ 📜preprocess.py
+ ┣ 📂model
+ ┃ ┣ 📜_loss.py
+ ┃ ┣ 📜_model.py
+ ┃ ┣ 📜_optimizer.py
+ ┃ ┗ 📜_schedular.py
+ ┣ 📂util
+ ┃ ┣ 📜seed.py
+ ┃ ┣ 📜utility.py
+ ┃ ┗ 📜visualize.py
  ┣ 📜.gitignore
- ┣ 📜dataset.py
- ┣ 📜ensemble_weights.py
- ┣ 📜function.py
- ┣ 📜inference.py
- ┣ 📜k-fold-inference.py
- ┣ 📜loss.py
- ┣ 📜model.py
+ ┣ 📜augmentation_list.txt
+ ┣ 📜infer.py
+ ┣ 📜README.md
  ┣ 📜requirements.txt
+ ┣ 📜timm_list.txt
  ┗ 📜train.py
 ```
 ### (수정)
