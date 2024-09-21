@@ -61,7 +61,18 @@ Computer Vision에서는 다양한 형태의 이미지 데이터가 활용되고
 - 2024.09.10 (화) 10:00 ~ 2024.09.26 (목) 17:00
 
 프로젝트 세부 일정 
-(수정)
+
+
+## 💻 개발 환경
+```bash
+- Language : Python
+- Environment
+  - CPU : Intel(R) Xeon(R) Gold 5120
+  - GPU : Tesla V100-SXM2 32GB × 1
+- Framework : PyTorch
+- Collaborative Tool : Git, Wandb, Notion
+```
+
 
 ## 🏆 프로젝트 결과 (수정)
 - Private 리더보드에서 최종적으로 아래와 같은 결과를 얻었습니다.  
@@ -126,12 +137,12 @@ Computer Vision에서는 다양한 형태의 이미지 데이터가 활용되고
  ┗ 📜train.py
 ```
 ### (수정)
-#### 1) `dataset.py` 
-- Dataset class와 Augmentation class를 구현한 파일
-- CustomAugmentation, ImgaugAugmentation 구현
-#### 2) `loss.py` 
-- 이미지 분류에 사용될 수 있는 다양한 Loss 들을 정의한 파일
-- Cross Entropy, Focal Loss, Label Smoothing Loss, F1 Loss 구현
+#### 1) `dataloader/Preprocess.py` 
+- resize와 여러 augmentation class를 구현한 파일
+- 'config/training_setting.yml'에서 augmentation인자의 parameter값 변경 
+#### 2) `dataloader/dataloader.py` 
+- 정의된 전처리 방식으로  transform을 적용한 후 image와 target을 tuple로 return하는 파일
+- torch Dataset 객체를 return
 #### 3) `model.py`
 - 학습에 사용한 Model 클래스를 구현한 파일 
 - resnet34, resnet50, Resnet34CategoryModel, efficientnet_b0, efficientnet_b1, efficientnet_b2, efficientnet_b5, vit_base_patch16_224, vit_B_16_imagenet1k, vit-age-classifier
