@@ -1,292 +1,111 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[ ]:
+
+
 import os
-import pandas as pd
 import torch
-import yaml
-from torch import nn, optim
-from torch.utils.data import DataLoader, Dataset
-from tqdm.auto import tqdm
-from model import _loss, _model, _optimizer, _schedular
-from util import seed
-from dataloader import dataloader, preprocess
+from tqdm import tqdm
 import wandb
-import matplotlib.pyplot as plt
 
-
-# 원본 baseline 코드에서 가져온 class에 몇가지 메서드가 추가되었습니다.
-class Trainer:
-    def __init__(
-        self, 
-        model: nn.Module, 
-        device: torch.device, 
-        train_loader: DataLoader, 
-        val_loader: DataLoader, 
-        optimizer: optim.Optimizer,
-        scheduler: optim.lr_scheduler,
-        loss_fn: torch.nn.modules.loss._Loss, 
-        epochs: int,
-        result_path: str
-    ):
-        # 클래스 초기화: 모델, 디바이스, 데이터 로더 등 설정
-        self.model = model.to(device)  # 훈련할 모델
-        self.device = device  # 연산을 수행할 디바이스 (CPU or GPU)
-        self.train_loader = train_loader  # 훈련 데이터 로더
-        self.val_loader = val_loader  # 검증 데이터 로더
-        self.optimizer = optimizer  # 최적화 알고리즘
-        self.scheduler = scheduler # 학습률 스케줄러
-        self.loss_fn = loss_fn  # 손실 함수
-        self.epochs = epochs  # 총 훈련 에폭 수
-        self.result_path = result_path  # 모델 저장 경로
-        self.best_models = [] # 가장 좋은 상위 3개 모델의 정보를 저장할 리스트
-        self.lowest_loss = float('inf') # 가장 낮은 Loss를 저장할 변수
-        
-        self.train_losses = []
-        self.val_losses = []
-        self.train_accuracies = []
-        self.val_accuracies = []
-
+def train(model, train_loader, val_loader, criterion, optimizer, scheduler, device, max_epochs, save_dir, log_dir, start_epoch=0, patience=5, accumulation_steps=8):
+    best_val_loss = float('inf')
+    best_val_acc = 0.0
+    early_stopping_counter = 0
+    log_file = os.path.join(log_dir, 'training_log.txt')
     
-    # epoch이 진행되면서 acc, loss의 양상을 보여줍니다
-    def plot_metrics(self):
-        epochs = range(1, self.epochs + 1)
-        
-        plt.figure(figsize=(12, 4))
-        
-        plt.subplot(1, 2, 1)
-        plt.plot(epochs, self.train_losses, label='Train Loss')
-        plt.plot(epochs, self.val_losses, label='Validation Loss')
-        plt.xlabel('Epoch')
-        plt.ylabel('Loss')
-        plt.legend()
-        
-        plt.subplot(1, 2, 2)
-        plt.plot(epochs, self.train_accuracies, label='Train Accuracy')
-        plt.plot(epochs, self.val_accuracies, label='Validation Accuracy')
-        plt.xlabel('Epoch')
-        plt.ylabel('Accuracy')
-        plt.legend()
-        
-        plt.tight_layout()
-        plt.savefig(os.path.join(self.result_path, 'metrics.png'))
-        plt.show()
-    
-    
-    def save_model(self, epoch, loss):
-        # 모델 저장 경로 설정
-        os.makedirs(self.result_path, exist_ok=True)
+    if start_epoch == 0:
+        with open(log_file, 'w') as f:
+            f.write("Training log\n")
+            f.write("Epoch,Train Loss,Validation Loss,Validation Accuracy\n")
+    else:
+        with open(log_file, 'a') as f:
+            f.write(f"\nResuming training from epoch {start_epoch}\n")
 
-        # 현재 에폭 모델 저장
-        current_model_path = os.path.join(self.result_path, f'model_epoch_{epoch}_loss_{loss:.4f}.pt')
-        torch.save(self.model.state_dict(), current_model_path)
-
-        # 최상위 3개 모델 관리
-        self.best_models.append((loss, epoch, current_model_path))
-        self.best_models.sort()
-        if len(self.best_models) > 3:
-            _, _, path_to_remove = self.best_models.pop(-1)  # 가장 높은 손실 모델 삭제
-            if os.path.exists(path_to_remove):
-                os.remove(path_to_remove)
-
-        # 가장 낮은 손실의 모델 저장
-        if loss < self.lowest_loss:
-            self.lowest_loss = loss
-            best_model_path = os.path.join(self.result_path, 'best_model.pt')
-            torch.save(self.model.state_dict(), best_model_path)
-            print(f"Save {epoch}epoch result. Loss = {loss:.4f}")
-
-
-    def train_epoch(self) -> float:
-        # 한 에폭 동안의 훈련을 진행
-        self.model.train()
-        
-        total_loss = 0.0
-        total_num = 0
-        total_correct = 0
-        progress_bar = tqdm(self.train_loader, desc="Training", leave=False)
-        
-        for images, targets in progress_bar:
-            images, targets = images.to(self.device), targets.to(self.device)
-            self.optimizer.zero_grad()
-            outputs = self.model(images)
-            loss = self.loss_fn(outputs, targets)
+    for epoch in range(start_epoch, max_epochs):
+        # Training loop
+        model.train()
+        train_loss = 0.0
+        optimizer.zero_grad()
+        for i, (inputs, labels) in enumerate(tqdm(train_loader, desc=f"Epoch {epoch+1}/{max_epochs} - Training")):
+            inputs, labels = inputs.to(device), labels.to(device)
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss = loss / accumulation_steps  # Normalize the loss
             loss.backward()
-            self.optimizer.step()
-            self.scheduler.step()
-            total_loss += loss.item()
             
-            # acc 계산
-            with torch.no_grad():
-                outputs = torch.argmax(outputs, axis=1)
-                total_correct += torch.sum(outputs == targets).item()
-                total_num += images.shape[0]
-            progress_bar.set_postfix(loss=loss.item(), acc=total_correct / total_num)
+            if (i + 1) % accumulation_steps == 0 or (i + 1) == len(train_loader):
+                optimizer.step()
+                optimizer.zero_grad()
+            
+            train_loss += loss.item() * accumulation_steps
         
+        train_loss /= len(train_loader)
         
-        final_loss = total_loss / len(self.train_loader)
-        final_acc = total_correct / total_num
-        # 1에폭 끝나면 wandb로 로깅
-        wandb.log({'training_loss' : final_loss,
-                   'training_acc' : final_acc})
-        
-        self.train_losses.append(final_loss)
-        self.train_accuracies.append(final_acc)
-        return final_loss, final_acc
-
-    def validate(self) -> float:
-        # 모델의 검증을 진행
-        self.model.eval()
-        
-        total_loss = 0.0
-        total_num = 0
-        total_correct = 0
-        progress_bar = tqdm(self.val_loader, desc="Validating", leave=False)
-        
+        # Validation loop
+        model.eval()
+        val_loss = 0.0
+        correct = 0
+        total = 0
         with torch.no_grad():
-            for images, targets in progress_bar:
-                images, targets = images.to(self.device), targets.to(self.device)
-                outputs = self.model(images)    
-                loss = self.loss_fn(outputs, targets)
-                outputs = torch.argmax(outputs, axis=1)
-                total_correct += torch.sum(outputs == targets).item()
-                total_num += outputs.shape[0]
-                total_loss += loss.item()
-                progress_bar.set_postfix(loss=loss.item(), acc=total_correct / total_num)
+            for inputs, labels in tqdm(val_loader, desc=f"Epoch {epoch+1}/{max_epochs} - Validation"):
+                inputs, labels = inputs.to(device), labels.to(device)
+                outputs = model(inputs)
+                loss = criterion(outputs, labels)
+                val_loss += loss.item()
+                _, predicted = outputs.max(1)
+                total += labels.size(0)
+                correct += predicted.eq(labels).sum().item()
         
+        val_loss /= len(val_loader)
+        val_acc = correct / total
         
-        final_loss = total_loss / len(self.val_loader)
-        final_acc = total_correct / total_num
-        wandb.log({'validation_loss' : final_loss,
-                   'validation_acc' : final_acc})
+        scheduler.step(val_loss)
         
-        self.val_accuracies.append(final_acc)
-        self.val_losses.append(final_loss)
-        return final_loss, final_acc
-
-
-    def train(self) -> None:
-        # 전체 훈련 과정을 관리
-        for epoch in range(self.epochs):
-            print(f"Epoch {epoch+1}/{self.epochs}")
-            
-            train_loss, train_acc = self.train_epoch()
-            val_loss, val_acc = self.validate()
-            print(f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Train acc: {train_acc:.4f}, Validation Loss: {val_loss:.4f} , Validation acc: {val_acc:.4f}\n")
-
-            self.save_model(epoch, val_loss)
-            self.scheduler.step()
+        # Log the results
+        wandb.log({
+            'epoch': epoch,
+            'train_loss': train_loss,
+            'val_loss': val_loss,
+            'val_accuracy': val_acc,
+            'learning_rate': optimizer.param_groups[0]['lr']
+        })
         
-        self.plot_metrics()
+        with open(log_file, 'a') as f:
+            f.write(f"{epoch+1},{train_loss:.4f},{val_loss:.4f},{val_acc:.4f}\n")
+        
+        print(f"Epoch {epoch+1}: Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.4f}")
+        
+        # Save model after each epoch
+        model_state = {
+            'epoch': epoch,
+            'model_state_dict': model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'val_loss': val_loss,
+            'val_acc': val_acc,
+        }
+        save_path = os.path.join(save_dir, f'model_epoch_{epoch+1}_loss_{val_loss:.4f}_acc_{val_acc:.4f}.pth')
+        torch.save(model_state, save_path)
+        print(f"Model saved at: {save_path}")
+        
+        # Update best model if it has the best validation loss so far
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            best_val_acc = val_acc
+            early_stopping_counter = 0
+            best_model_path = save_path
+            print(f"New best model with validation loss: {val_loss:.4f}")
+        else:
+            early_stopping_counter += 1
+        
+        # Early stopping
+        if early_stopping_counter >= patience:
+            print(f"Early stopping triggered after {epoch+1} epochs")
+            break
+    
+    print(f"Training completed. Best Validation Loss: {best_val_loss:.4f}, Best Validation Accuracy: {best_val_acc:.4f}")
+    print(f"Best model saved at: {best_model_path}")
+    
+    return best_val_loss, best_val_acc, best_model_path
 
-
-
-
-
-def main():
-    ##########################################################################################################
-    ########## setting. 나중에 argparser로 대체할 예정. infer.py도 마찬가지
-    # 만약 argparser로 할거면 augmentation setting은 고정해두고 해야할듯
-    with open('./config/training_setting.yml', 'r', encoding='utf-8') as f:
-        config = yaml.full_load(f)
-    
-    
-    # parse directory setting
-    os.chdir(config["project_dir"])
-    traindata_dir = config["traindata_dir"]
-    traindata_info_file = config["traindata_info_file"]
-    
-    
-    # parse training setting
-    TEST_SIZE = config["test_size"]
-    BATCH_SIZE = config["batch_size"]
-    EPOCHS = config["epochs"]
-    save_result_path = config["save_result_path"]
-    
-    SCHEDULAR = config["schedular"][config["schedular"]["select"]]
-    OPTIMIZER = config["optimizer"][config["optimizer"]["select"]]
-    
-    
-    # parse model info
-    MODEL_TYPE = config["model_type"]
-    MODEL_NAME = config["model_name"]
-    IS_PRETRAINED = config["is_pretrained"]
-    
-
-    # parse augmentation and preprocessing setting
-    AUGMENTATION = config["augmentation"]
-    ##########################################################################################################
-    ##### wandb setting
-    wandb.init(project=config["project_name"])
-    wandb.run.name = config["test_name"]
-    wandb.run.save()
-    
-    wandb.config.update(config)
-    ##########################################################################################################
-    
-    
-    # device check
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(device)
-    
-    # seed
-    seed.seed_everything(42)
-    
-    # load image meta data csv
-    df = pd.read_csv(traindata_info_file)
-    num_classes = len(df["class_name"].unique())
-    
-    # validation data 나누기
-    train_df, test_df = dataloader.train_val_split(df, TEST_SIZE)
-    
-    
-    # train, test image에 대한 전처리 정의
-    train_transform = preprocess.AlbumentationsTransform(is_train=True, **AUGMENTATION)
-    AUGMENTATION["save_name"] = "test_transform.yml"
-    test_transform = preprocess.AlbumentationsTransform(is_train=False, **AUGMENTATION)
-    
-    
-    # train, test dataloader
-    train_dataloader = dataloader.get_dataloader(root_dir = traindata_dir, 
-                                                 info_df = train_df, 
-                                                 transform = train_transform, 
-                                                 batch_size = BATCH_SIZE, 
-                                                 is_inference = False, 
-                                                 seedworker = seed.seed_worker)
-    
-    test_dataloader = dataloader.get_dataloader(root_dir = traindata_dir, 
-                                                 info_df = test_df, 
-                                                 transform = test_transform, 
-                                                 batch_size = BATCH_SIZE, 
-                                                 is_inference = False, 
-                                                 seedworker = seed.seed_worker)
-    
-    # # model 정의하기
-    model = _model.ModelSelector(
-        model_type = MODEL_TYPE,
-        num_classes = num_classes,
-        model_name = MODEL_NAME,
-        pretrained = IS_PRETRAINED
-    ).get_model()
-    
-    
-    # optimizer, loss, schedular
-    optimizer = _optimizer.get_optimizer(model.parameters(), **OPTIMIZER)
-    criterion = _loss.get_loss()
-    schedular = _schedular.get_schedular(optimizer, **SCHEDULAR)
-    
-    
-    # Trainer class
-    trainer = Trainer(
-        model = model,
-        device = device,
-        train_loader = train_dataloader,
-        val_loader = test_dataloader,
-        optimizer = optimizer,
-        scheduler = schedular,
-        loss_fn = criterion,
-        epochs = EPOCHS,
-        result_path = save_result_path
-    )
-    trainer.train()
-
-
-if __name__ == "__main__":
-    main()
