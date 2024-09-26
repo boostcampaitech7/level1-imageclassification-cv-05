@@ -61,6 +61,7 @@ Computer Vision에서는 다양한 형태의 이미지 데이터가 활용되고
 - 2024.09.10 (화) 10:00 ~ 2024.09.26 (목) 17:00
 
 프로젝트 세부 일정 
+![image](https://github.com/user-attachments/assets/25faf3e9-1a72-4352-9bca-d178f52efdcb)
 
 
 ## 💻 개발 환경
@@ -75,7 +76,9 @@ Computer Vision에서는 다양한 형태의 이미지 데이터가 활용되고
 
 
 ## 🏆 프로젝트 결과 (수정)
-- Private 리더보드에서 최종적으로 아래와 같은 결과를 얻었습니다.  
+- Public 3등, Private 4등
+![image](https://github.com/user-attachments/assets/cc8878a8-538e-478e-a026-9950f9a5aefe)   
+![image](https://github.com/user-attachments/assets/c8d3b304-e8c0-45ff-8ac2-893dfb816cc6)
 
 
 ## 📁 데이터셋 구조 
