@@ -103,36 +103,34 @@ Computer Vision에서는 다양한 형태의 이미지 데이터가 활용되고
 
 ## 📁 프로젝트 구조 
 ```
-📦level1-imageclassification-cv-05-main
+📦level1-imageclassification-cv-05
  ┣ 📂.github
  ┃ ┗ 📜.keep
  ┣ 📂baseline_code
  ┃ ┣ 📜baseline_code.ipynb
  ┃ ┗ 📜eda.ipynb
- ┣ 📂config
- ┃ ┣ 📜test_setting.yml
- ┃ ┣ 📜test_transform
- ┃ ┣ 📜test_transform.yml
- ┃ ┣ 📜training_setting.yml
- ┃ ┣ 📜train_transform.yml
- ┃ ┗ 📜transform.json
- ┣ 📂dataloader
- ┃ ┣ 📜dataloader.py
- ┃ ┗ 📜preprocess.py
- ┣ 📂model
- ┃ ┣ 📜_loss.py
- ┃ ┣ 📜_model.py
- ┃ ┣ 📜_optimizer.py
- ┃ ┗ 📜_schedular.py
- ┣ 📂util
- ┃ ┣ 📜seed.py
- ┃ ┣ 📜utility.py
- ┃ ┗ 📜visualize.py
+ ┣ 📂data
+ ┃ ┣ 📜.DS_Store
+ ┃ ┣ 📜._DS_Store
+ ┃ ┣ 📜._sample_submission.csv
+ ┃ ┣ 📜._test.csv
+ ┃ ┣ 📜._train.csv
+ ┃ ┣ 📜sample_submission.csv
+ ┃ ┣ 📜test.csv
+ ┃ ┗ 📜train.csv
+ ┣ 📂model_checkpoints
+ ┣ 📂training_logs
+ ┃ ┗ 📜training_log.txt
  ┣ 📜.gitignore
+ ┣ 📜augmentation.py
  ┣ 📜augmentation_list.txt
- ┣ 📜infer.py
+ ┣ 📜dataset.py
+ ┣ 📜inference.py
+ ┣ 📜main.py
+ ┣ 📜model.py
  ┣ 📜README.md
  ┣ 📜requirements.txt
+ ┣ 📜seed.py
  ┣ 📜timm_list.txt
  ┗ 📜train.py
 ```
