@@ -61,7 +61,8 @@ Computer Vision에서는 다양한 형태의 이미지 데이터가 활용되고
 - 2024.09.10 (화) 10:00 ~ 2024.09.26 (목) 17:00
 
 프로젝트 세부 일정 
-![image](https://github.com/user-attachments/assets/25faf3e9-1a72-4352-9bca-d178f52efdcb)
+![image](https://github.com/user-attachments/assets/1e019978-bc90-4fd2-821a-2f809b713e8c)
+
 
 
 ## 💻 개발 환경
