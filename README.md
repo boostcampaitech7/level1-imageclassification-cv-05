@@ -110,9 +110,6 @@ Computer Vision에서는 다양한 형태의 이미지 데이터가 활용되고
 📦level1-imageclassification-cv-05
  ┣ 📂.github
  ┃ ┗ 📜.keep
- ┣ 📂baseline_code
- ┃ ┣ 📜baseline_code.ipynb
- ┃ ┗ 📜eda.ipynb
  ┣ 📂data
  ┃ ┣ 📜.DS_Store
  ┃ ┣ 📜._DS_Store
