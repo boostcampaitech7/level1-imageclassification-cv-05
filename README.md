@@ -261,4 +261,4 @@ Computer Vision에서는 다양한 형태의 이미지 데이터가 활용되고
 <br />
 
 ## ✏️ Wrap-Up Report   
-- [Wrap-Up Report](https://github.com/boostcampaitech6/level1-imageclassification-cv-02/blob/main/docs/CV%EA%B8%B0%EC%B4%88%EB%8C%80%ED%9A%8C_CV_2%ED%8C%80%20%EB%A6%AC%ED%8F%AC%ED%8A%B8(02%EC%A1%B0)_%EC%97%85%EB%A1%9C%EB%93%9C%EC%9A%A9.pdf)
+- [Wrap-Up Report](https://drive.google.com/file/d/1QDnYMq0fmI9uFghMYs0ZgODhgBYgLJEq/view?usp=sharing)
