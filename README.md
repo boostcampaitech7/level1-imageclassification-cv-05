@@ -75,6 +75,9 @@ Computer Vision에서는 다양한 형태의 이미지 데이터가 활용되고
 - Collaborative Tool : Git, Wandb, Notion
 ```
 
+## ✏️ Wrap-Up Report   
+- [Wrap-Up Report](https://drive.google.com/file/d/1QDnYMq0fmI9uFghMYs0ZgODhgBYgLJEq/view?usp=sharing)
+- https://john8538.tistory.com/21
 
 ## 🏆 프로젝트 결과 (수정)
 - Public 3등, Private 4등
