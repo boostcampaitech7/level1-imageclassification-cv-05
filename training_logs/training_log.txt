@@ -1,0 +1,2 @@
+Training log
+Epoch,Train Loss,Validation Loss,Validation Accuracy
